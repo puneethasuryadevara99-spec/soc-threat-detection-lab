@@ -1,0 +1,21 @@
+# Python virtual environments
+.venv/
+venv/
+
+# Python cache and test artifacts
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+
+# Environment secrets
+.env
+.env.*
+*.pem
+*.key
+
+# macOS
+.DS_Store
+
+# Editor settings
+.vscode/

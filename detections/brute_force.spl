@@ -1,0 +1,16 @@
+
+source="authentication_logs.csv" event_type="FAILURE"
+| sort 0 _time
+| streamstats window=5 global=f count as failure_count min(_time) as first_failure by username source_ip
+| where failure_count>=5 AND (_time-first_failure)<=60
+| stats min(_time) as first_alert_time by username source_ip
+| eval detected_at=strftime(first_alert_time,"%Y-%m-%d %H:%M:%S")
+| table username source_ip detected_at
+  
+source="authentication_logs.csv" event_type="FAILURE"
+| bin _time span=1m
+| stats dc(username) as targeted_accounts count as failed_attempts values(username) as usernames by source_ip _time
+| where targeted_accounts >= 5
+| eval window_start=strftime(_time,"%Y-%m-%d %H:%M:%S")
+| table window_start source_ip failed_attempts targeted_accounts usernames
+  
